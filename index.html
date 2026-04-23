@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>光功率链路计算器</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <h1>🔌 光功率链路计算器</h1>
+  <p class="subtitle">Optical Power Link Calculator</p>
+
+  <!-- Module 1: mW ↔ dBm ↔ V -->
+  <div class="module">
+    <div class="module-title">⚡ Module 1: 单位换算 (50Ω)</div>
+    
+    <div class="input-group">
+      <label>输入模式</label>
+      <select id="inputMode1">
+        <option value="mW">mW</option>
+        <option value="dBm">dBm</option>
+        <option value="V">V (50Ω)</option>
+      </select>
+    </div>
+    
+    <div class="input-group">
+      <label>输入值</label>
+      <input type="number" id="inputValue1" placeholder="输入数值" step="any">
+    </div>
+    
+    <div class="converter-grid">
+      <div class="result-display">
+        <div class="result-value" id="result-mW">—</div>
+        <div class="result-unit">mW</div>
+      </div>
+      <div class="result-display">
+        <div class="result-value" id="result-dBm">—</div>
+        <div class="result-unit">dBm</div>
+      </div>
+      <div class="result-display">
+        <div class="result-value" id="result-V">—</div>
+        <div class="result-unit">V (50Ω)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Module 2: Gain Calculator -->
+  <div class="module">
+    <div class="module-title">📈 Module 2: 增益计算</div>
+    
+    <div class="input-group">
+      <label>输入单位</label>
+      <select id="inputMode2">
+        <option value="mW">mW</option>
+        <option value="V">V (50Ω)</option>
+      </select>
+    </div>
+    
+    <div class="gain-row">
+      <div class="input-group">
+        <label>输入功率</label>
+        <input type="number" id="gainInput" placeholder="输入功率" step="any">
+      </div>
+      <div class="input-group">
+        <label>增益 (dB)</label>
+        <input type="number" id="gainDb" placeholder="如 +10" step="any">
+      </div>
+    </div>
+    
+    <div class="gain-result">
+      <div class="result-value" id="gainResult-mW">—</div>
+      <div class="result-unit">mW (输出)</div>
+      <div style="margin-top:8px; color: rgba(255,255,255,0.7); font-size: 0.85rem;">
+        <span id="gainResult-dBm">—</span> dBm
+      </div>
+    </div>
+    
+    <div class="formula-hint">
+      Output mW = 10^((10 × log₁₀(输入mW) + 增益) / 10)
+    </div>
+  </div>
+
+  <!-- Module 3: Cascade Link -->
+  <div class="module">
+    <div class="module-title">🔗 Module 3: 级联链路功率计算</div>
+    
+    <div class="input-group">
+      <label>输入单位</label>
+      <select id="cascadeInputMode">
+        <option value="dBm">dBm</option>
+        <option value="mW">mW</option>
+      </select>
+    </div>
+    
+    <div class="input-group">
+      <label>输入功率</label>
+      <input type="number" id="cascadeInput" placeholder="输入功率" step="any">
+    </div>
+    
+    <div class="input-group">
+      <label>链路损耗 (Link Loss) dB</label>
+      <input type="number" id="linkLoss" value="0" step="any">
+    </div>
+    
+    <div style="margin: 16px 0 8px;">
+      <button class="preset-btn" onclick="addDevice()">+ 添加器件</button>
+    </div>
+    
+    <div class="cascade-header">
+      <span>器件</span>
+      <span>增益</span>
+      <span>数量</span>
+    </div>
+    <div id="deviceRows"></div>
+    
+    <div class="summary-card">
+      <div class="summary-row">
+        <span class="summary-label">输出功率</span>
+        <span class="summary-value highlight" id="cascadeOutput-mW">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">输出 (dBm)</span>
+        <span class="summary-value" id="cascadeOutput-dBm">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">净增益</span>
+        <span class="summary-value" id="cascadeNetGain">—</span>
+      </div>
+      <pre id="cascadeBreakdown" class="breakdown" style="display:none;"></pre>
+    </div>
+  </div>
+
+  <!-- Navigation Footer -->
+  <div class="nav-footer">
+    <a href="#" class="nav-btn active">⚡ 功率计算</a>
+    <a href="#" class="nav-btn">📊 稳定度</a>
+    <a href="#" class="nav-btn">📁 其他</a>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
