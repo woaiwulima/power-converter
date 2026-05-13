@@ -10,7 +10,7 @@ function convertPower() {
   const inputMode = document.getElementById('inputMode1').value;
   const inputValue = parseFloat(document.getElementById('inputValue1').value);
   
-  if (isNaN(inputValue) || inputValue === 0) {
+  if (isNaN(inputValue)) {
     clearResults1();
     return;
   }
@@ -37,10 +37,15 @@ function convertPower() {
       mW = (V * V) * 1000 / Z0;
       dBm = 10 * Math.log10(mW);
       break;
+    case 'W':
+      mW = inputValue * 1000;
+      dBm = 10 * Math.log10(mW);
+      V = Math.sqrt(mW * Z0 / 1000);
+      break;
   }
   
   document.getElementById('result-mW').textContent = mW.toFixed(6);
-  document.getElementById('result-dBm').textContent = dBm.toFixed(4);
+  document.getElementById('result-dBm').textContent = mW === 0 ? '-∞' : dBm.toFixed(4);
   document.getElementById('result-V').textContent = V.toFixed(6);
 }
 
@@ -56,7 +61,7 @@ function calculateGain() {
   const inputValue = parseFloat(document.getElementById('gainInput').value);
   const gainDb = parseFloat(document.getElementById('gainDb').value);
   
-  if (isNaN(inputValue) || isNaN(gainDb) || inputValue <= 0) {
+  if (isNaN(inputValue) || isNaN(gainDb)) {
     document.getElementById('gainResult-mW').textContent = '—';
     document.getElementById('gainResult-dBm').textContent = '—';
     return;
@@ -65,6 +70,8 @@ function calculateGain() {
   let inputMw;
   if (inputMode === 'mW') {
     inputMw = inputValue;
+  } else if (inputMode === 'W') {
+    inputMw = inputValue * 1000;
   } else {
     // V mode
     inputMw = (inputValue * inputValue) * 1000 / 50;
@@ -75,7 +82,7 @@ function calculateGain() {
   const outputDbm = 10 * Math.log10(outputMw);
   
   document.getElementById('gainResult-mW').textContent = outputMw.toFixed(6);
-  document.getElementById('gainResult-dBm').textContent = outputDbm.toFixed(4);
+  document.getElementById('gainResult-dBm').textContent = outputMw === 0 ? '-∞' : outputDbm.toFixed(4);
 }
 
 // ========== Module 3: Cascade Link Calculator ==========
@@ -166,7 +173,7 @@ function calculateCascade() {
   const inputValue = parseFloat(document.getElementById('cascadeInput').value);
   const linkLoss = parseFloat(document.getElementById('linkLoss').value) || 0;
   
-  if (isNaN(inputValue) || inputValue <= 0) {
+  if (isNaN(inputValue)) {
     clearCascadeResults();
     return;
   }
@@ -175,6 +182,8 @@ function calculateCascade() {
   let inputDbm;
   if (inputMode === 'dBm') {
     inputDbm = inputValue;
+  } else if (inputMode === 'W') {
+    inputDbm = 10 * Math.log10(inputValue * 1000);
   } else {
     // mW mode
     inputDbm = 10 * Math.log10(inputValue);
@@ -198,7 +207,7 @@ function calculateCascade() {
   
   // Update UI
   document.getElementById('cascadeOutput-mW').textContent = outputMw.toFixed(6);
-  document.getElementById('cascadeOutput-dBm').textContent = outputDbm.toFixed(4);
+  document.getElementById('cascadeOutput-dBm').textContent = outputMw === 0 ? '-∞' : outputDbm.toFixed(4);
   document.getElementById('cascadeNetGain').textContent = (totalGain - linkLoss).toFixed(1);
   
   // Breakdown
